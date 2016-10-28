@@ -29,6 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import com.sun.org.apache.bcel.internal.generic.IfInstruction;
+
 public class Home extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -153,7 +155,8 @@ public class Home extends JFrame {
 				if(!tfEntrada.getText().equals("") && !tfSaida.getText().equals("")){
 					ArrayList<String> arquivo_final = programacao(abre_arquivo(arq_entrada.toString()));
 					dataRPS(arquivo_final);
-					grava_arquivo(caminho_arq_sai.toString(), nome_arq_sai, arquivo_final);
+					grava_arquivo_dividido (caminho_arq_sai.toString(), nome_arq_sai, arquivo_final, 1000);
+					//grava_arquivo(caminho_arq_sai.toString(), nome_arq_sai, arquivo_final);
 					grava_arquivo(caminho_arq_sai.toString(), "log.txt", log);
 				}else{
 					JOptionPane.showMessageDialog(frame,"Informe os arquivos de entrada e saída.");
@@ -299,10 +302,42 @@ public class Home extends JFrame {
 					arquivo_lapidado.add(linha_manipulada);
 				}else;
 			}
-			
 		}
 		return arquivo_lapidado;
 	}
 
-	
+	//Metoddo para gravar o arquivo em disco
+		private void grava_arquivo_dividido(String caminho, String arqui_sai,ArrayList<String> gravar, int qtd_linhas){
+			
+			int j = 0;
+			int contador_arquivo = 0;
+			ArrayList<String> arquivo_dividido = new ArrayList<>();
+			for (int i = 0; i < gravar.size(); i++) {
+				arquivo_dividido.add(gravar.get(i));
+				if (j==qtd_linhas) {
+					try {
+						File arq = new File(caminho, contador_arquivo+arqui_sai);
+			            arq.createNewFile();
+			            //FileWriter fileWriter = new FileWriter(arq, false);
+			            PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(arq)));
+			            //PrintWriter printWriter = new PrintWriter(fileWriter);
+			            for(int k=0;k<arquivo_dividido.size();j++ ){
+			            	printWriter.println(arquivo_dividido.get(k));
+			            }
+			            printWriter.flush();
+			            printWriter.close();
+			        } catch (IOException e) {
+			        	System.out.println("Erro ao gravar o arquivo, Erro 1.");
+			        }
+					j=0;
+					arquivo_dividido = new ArrayList<>();
+				}
+				j++;
+			}
+			
+			
+			
+			
+		}
+
 }
